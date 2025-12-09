@@ -18,7 +18,7 @@ export default function Home() {
       {/* Cute Plant Mascot - Popup Greeting */}
       <div className="mascot-container" id="mascot">
         <div className="mascot-wrapper">
-          <button className="close-btn" onClick="document.getElementById('mascot').style.display='none'">×</button>
+          <button className="close-btn" onClick={() => { const mascot = document.getElementById('mascot'); if (mascot) mascot.style.display = 'none'; }}>×</button>
           <div className="cute-plant">
             <div className="pot"></div>
             <div className="stem"></div>
