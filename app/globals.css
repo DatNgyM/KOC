@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 45, 52, 54;
+  --background-start-rgb: 253, 246, 236;
+  --background-end-rgb: 255, 255, 255;
+  --font-space: 'Space Grotesk', sans-serif;
+  --font-poppins: 'Poppins', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background-color: #FDF6EC;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(27, 87%, 92%, 1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(0, 100%, 81%, 0.4) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(190, 42%, 68%, 0.2) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(42, 100%, 70%, 0.2) 0px, transparent 50%);
+  background-attachment: fixed;
+  font-family: var(--font-space), system-ui, sans-serif;
+  cursor: url('/assets/cursor/pointer.png'), auto;
+}
+
+/* Tùy chỉnh cursor cho các element tương tác */
+a, button, [role="button"], input, select, textarea, .cursor-pointer {
+  cursor: url('/assets/cursor/pointer.png'), pointer;
+}
+
+/* Chỉ hiện lại cursor hệ thống trên thiết bị chạm (mobile/tablet) */
+/* @media (pointer: coarse) {
+  body, a, button, [role="button"], input, select, textarea, .cursor-pointer {
+    cursor: auto;
+  }
+} */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+}
+
+/* Smooth Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+.animate-wiggle {
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+/* Custom scrollbar - Friendly style */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+@keyframes wave-drift-1 {
+  0% { transform: translateX(0) scaleY(1); }
+  50% { transform: translateX(-25px) scaleY(1.1); }
+  100% { transform: translateX(0) scaleY(1); }
+}
+
+@keyframes wave-drift-2 {
+  0% { transform: translateX(0) scaleY(1); }
+  50% { transform: translateX(35px) scaleY(1.2); }
+  100% { transform: translateX(0) scaleY(1); }
+}
+
+.animate-wave-1 {
+  animation: wave-drift-1 8s ease-in-out infinite;
+}
+
+.animate-wave-2 {
+  animation: wave-drift-2 12s ease-in-out infinite;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF9F5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FF9F9F;
+  border-radius: 6px;
+  border: 3px solid #FFF9F5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FFD166;
+}
+
+/* Selection color */
+::selection {
+  background-color: #FF9F9F;
+  color: white;
+}
+
+::-moz-selection {
+  background-color: #FF9F9F;
+  color: white;
+}

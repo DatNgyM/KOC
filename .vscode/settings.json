@@ -1,0 +1,25 @@
+{
+  "cSpell.enabled": false,
+  "spellright.enable": false,
+  "editor.wordBasedSuggestions": "off",
+  "[markdown]": {
+    "cSpell.enabled": false,
+    "spellright.enable": false
+  },
+  "[javascript]": {
+    "cSpell.enabled": true,
+    "cSpell.language": "en"
+  },
+  "[javascriptreact]": {
+    "cSpell.enabled": true,
+    "cSpell.language": "en"
+  },
+  "[typescript]": {
+    "cSpell.enabled": true,
+    "cSpell.language": "en"
+  },
+  "[typescriptreact]": {
+    "cSpell.enabled": true,
+    "cSpell.language": "en"
+  }
+}
