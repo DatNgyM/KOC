@@ -49,7 +49,9 @@ npm run lint
 ## 📝 Documentation
 
 - [TODO List](./docs/TODO_LIST.md) - Development roadmap
+- [Workflow Guide](./docs/WORKFLOW_GUIDE.md) - **⭐ Chi tiết từng bước làm việc**
 - [Gitflow Workflow](./docs/GITFLOW.md) - Git branching strategy
+- [Gitflow Quick Reference](./docs/GITFLOW_QUICK_REFERENCE.md) - Quick commands
 - [Deployment Guide](./docs/DEPLOY.md) - How to deploy
 
 ## 💡 Features
