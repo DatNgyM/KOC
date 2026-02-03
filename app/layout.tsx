@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Space_Grotesk, Poppins, Patrick_Hand } from 'next/font/google'
 import './globals.css'
-import GoogleAnalytics from '@/components/GoogleAnalytics'
+import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
 
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ['latin', 'latin-ext'],

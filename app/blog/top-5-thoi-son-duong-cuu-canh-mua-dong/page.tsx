@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, User, Clock, Check, X, ArrowLeft, Star, Heart } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
 // Mock Data cho bài viết
 const PRODUCTS = [

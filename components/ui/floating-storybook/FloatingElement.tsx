@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
-import { cn } from '@/lib/utils'; // Assuming utils exists, or I will create a simple helper here or use clsx directly
+import { cn } from '@/lib/utils/utils'; // Assuming utils exists, or I will create a simple helper here or use clsx directly
 
 interface FloatingElementProps {
   children: ReactNode;

@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { Calendar, User, ArrowLeft, Share2, MessageCircle } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import { motion } from 'framer-motion';
-import { BLOG_CONTENT } from '@/lib/blog-data';
+import { BLOG_CONTENT } from '@/lib/data/blog-data';
 
 export default function BlogDetailClient({ slug }: { slug: string }) {
   const post = BLOG_CONTENT[slug];

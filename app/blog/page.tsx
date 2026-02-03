@@ -5,8 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, User, ArrowRight, Tag, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
 // --- MOCK DATA ---
 const CATEGORIES = ['Tất cả', 'Review', 'Tips & Tricks', 'Lifestyle', 'Góc Chill'];

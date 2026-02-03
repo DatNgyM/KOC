@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import HomeClient from '@/components/HomeClient';
+import HomeClient from '@/components/home/HomeClient';
 
 export const metadata: Metadata = {
   title: 'Đi Săn Cùng Tớ | Săn Deal Gen Z & Review Có Tâm',

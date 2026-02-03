@@ -1,16 +1,16 @@
 'use client';
 
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { FloatingHero } from '@/components/floating-storybook/FloatingHero';
-import { BentoGrid, BentoGridItem } from '@/components/floating-storybook/BentoGrid';
-import { WavyDivider } from '@/components/floating-storybook/WavyDivider';
-import { StoryLine } from '@/components/floating-storybook/StoryLine';
-import { FloatingElement } from '@/components/floating-storybook/FloatingElement';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import { FloatingHero } from '@/components/ui/floating-storybook/FloatingHero';
+import { BentoGrid, BentoGridItem } from '@/components/ui/floating-storybook/BentoGrid';
+import { WavyDivider } from '@/components/ui/floating-storybook/WavyDivider';
+import { StoryLine } from '@/components/ui/floating-storybook/StoryLine';
+import { FloatingElement } from '@/components/ui/floating-storybook/FloatingElement';
 import Image from 'next/image';
-import { AffiliateGrid } from '@/components/floating-storybook/AffiliateGrid';
-import { HowItWorks } from '@/components/floating-storybook/HowItWorks';
-import { ReviewSection } from '@/components/floating-storybook/ReviewSection';
+import { AffiliateGrid } from '@/components/ui/floating-storybook/AffiliateGrid';
+import { HowItWorks } from '@/components/ui/floating-storybook/HowItWorks';
+import { ReviewSection } from '@/components/ui/floating-storybook/ReviewSection';
 import { motion } from 'framer-motion';
 
 // Example items for Bento Grid

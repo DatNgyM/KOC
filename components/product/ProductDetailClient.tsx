@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Star, ShoppingBag, Share2, Heart, Package, Truck, Shield, Check, MessageCircle, HelpCircle, FileText, PlayCircle } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import { motion } from 'framer-motion';
-import { PRODUCTS } from '@/lib/products';
+import { PRODUCTS } from '@/lib/data/products';
 import { useState } from 'react';
 
 // --- MOCK DATA FOR TABS ---

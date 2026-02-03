@@ -1,6 +1,6 @@
 import { Metadata, ResolvingMetadata } from 'next';
-import { BLOG_CONTENT } from '@/lib/blog-data';
-import BlogDetailClient from '@/components/BlogDetailClient';
+import { BLOG_CONTENT } from '@/lib/data/blog-data';
+import BlogDetailClient from '@/components/blog/BlogDetailClient';
 
 type Props = {
   params: Promise<{ slug: string }>

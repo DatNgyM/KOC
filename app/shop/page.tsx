@@ -6,10 +6,10 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import Header from '@/components/Header'; // Import Header
-import Footer from '@/components/Footer'; // Import Footer
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import { Quote, ShoppingBag, Star, Image as ImageIcon, Eye, Heart, X, Sparkles, Zap } from 'lucide-react';
-import { PRODUCTS } from '@/lib/products';
+import { PRODUCTS } from '@/lib/data/products';
 
 // Load Lottie dynamic để tránh lỗi SSR
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
