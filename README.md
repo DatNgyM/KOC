@@ -50,6 +50,7 @@ npm run lint
 
 - [TODO List](./docs/TODO_LIST.md) - Development roadmap
 - [Deployment Guide](./docs/DEPLOY.md) - How to deploy
+- [Passio / Ecomobi API](./docs/docs-passio-api.md) - Kết nối affiliate.passio.eco (API key, base URL, xử lý lỗi)
 
 ## 💡 Features
 
