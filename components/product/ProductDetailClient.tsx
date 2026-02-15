@@ -6,7 +6,7 @@ import { ArrowLeft, Star, ShoppingBag, Share2, Heart, Package, Truck, Shield, Ch
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { motion } from 'framer-motion';
-import { PRODUCTS } from '@/lib/data/products';
+import type { Product } from '@/lib/data/products';
 import { useState } from 'react';
 
 // --- MOCK DATA FOR TABS ---
@@ -51,8 +51,13 @@ const PlaceholderImage = ({ customImage, alt, className }: { customImage: string
   );
 };
 
-export default function ProductDetailClient({ slug }: { slug: string }) {
-  const product = PRODUCTS.find(p => p.slug === slug);
+type ProductDetailClientProps = {
+  slug: string;
+  product: Product;
+  products?: Product[];
+};
+
+export default function ProductDetailClient({ slug, product, products = [] }: ProductDetailClientProps) {
   const [activeImage, setActiveImage] = useState<string | null>(product?.image || null);
   const [activeTab, setActiveTab] = useState<'desc' | 'specs' | 'faq' | 'reviews'>('desc');
 
@@ -72,8 +77,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
     );
   }
 
-  // Related products logic
-  const relatedProducts = PRODUCTS.filter(p => p.id !== product.id && p.category === product.category).slice(0, 4);
+  const relatedProducts = products.filter(p => p.id !== product.id && p.category === product.category).slice(0, 4);
 
   return (
     <main className="min-h-screen bg-[#FDFBF7]">
@@ -239,6 +243,9 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
 
                      <p className="text-xs text-center text-gray-400 italic mt-4 bg-gray-50/80 backdrop-blur py-2 rounded-lg">
                         *Link mua hàng giúp mình có ly trà sữa đó, cảm ơn cậu! 💖
+                     </p>
+                     <p className="text-xs text-center text-gray-400 mt-2">
+                        Sản phẩm trên sàn có thể đã hết hoặc đổi link; nếu báo lỗi hãy thử tìm tên sản phẩm trên {product.platform}.
                      </p>
                   </div>
                </motion.div>

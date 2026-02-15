@@ -9,7 +9,8 @@ import { useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Quote, ShoppingBag, Star, Image as ImageIcon, Eye, Heart, X, Sparkles, Zap } from 'lucide-react';
-import { PRODUCTS } from '@/lib/data/products';
+import type { Product } from '@/lib/data/products';
+import { getKeywordSections } from '@/lib/data/shop-keywords';
 
 // Load Lottie dynamic để tránh lỗi SSR
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
@@ -27,7 +28,8 @@ const CUTE_QUOTES = [
 ];
 
 // --- DATA GENERATOR ---
-const FILTERS = ['Tất cả', 'Góc Chill', 'Chạy Deadline', 'Đi Học', 'Quà Tặng'];
+const KEYWORD_SECTIONS = getKeywordSections();
+const FILTERS = ['Tất cả', ...KEYWORD_SECTIONS.map((s) => s.label)];
 
 const CONTENT_TIPS = [
   {
@@ -56,43 +58,13 @@ const CONTENT_TIPS = [
   }
 ];
 
-// Hàm tạo data giả (88 items)
-const generateMockData = () => {
-  const items: any[] = [];
-  const TOTAL_ITEMS = 40; // Giảm số lượng để đỡ lag, ưu tiên sp thật
-  
-  // Thêm sản phẩm thật vào đầu list
-  PRODUCTS.forEach((prod, i) => {
-     items.push({
-        type: 'product',
-        ...prod,
-        id: `real-product-${i}` // Override ID để dùng làm key duy nhất trong list
-     });
-  });
-  
-  // Fill thêm cho đầy
-  for (let i = PRODUCTS.length; i < TOTAL_ITEMS; i++) {
-    if (i > 0 && i % 7 === 0) {
-      const tipIndex = Math.floor(i / 7) % CONTENT_TIPS.length;
-      const tip = CONTENT_TIPS[tipIndex];
-      items.push({
-        type: 'content',
-        id: `content-${i}`,
-        ...tip,
-        title: i % 2 === 0 ? tip.title : `${tip.title} #${Math.floor(i/7)}` 
-      });
-    } else {
-      const baseProduct = PRODUCTS[i % PRODUCTS.length];
-      items.push({
-        type: 'product',
-        ...baseProduct,
-        id: `product-${i}`,
-        id_suffix: i // để key không trùng
-      });
-    }
-  }
-  return items;
-};
+// Grid chỉ từ sản phẩm Passio (không mock, không fill)
+const buildGridFromProducts = (products: Product[]) =>
+  products.map((prod, i) => ({
+    type: 'product',
+    ...prod,
+    id: prod.id || `passio-${i}`,
+  }));
 
 const HEADERS = [
   {
@@ -160,27 +132,43 @@ const ProductSchema = ({ product }: { product: any }) => {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
 };
 
-// 2. Placeholder Image Component
-const PlaceholderImage = ({ className, customImage, alt }: { className?: string, customImage?: string, alt?: string }) => {
-   if (customImage) {
+// 2. Placeholder Image — hiển thị ảnh từ Passio (URL) hoặc placeholder
+const PlaceholderImage = ({ className, customImage, alt }: { className?: string, customImage?: string | null, alt?: string }) => {
+   const isExternalUrl = customImage?.startsWith('http://') || customImage?.startsWith('https://');
+
+   if (customImage && isExternalUrl) {
+      return (
+         <div className={`w-full h-full relative overflow-hidden ${className}`}>
+            <img
+               src={customImage}
+               alt={alt || 'Product'}
+               className="w-full h-full object-cover"
+               sizes="(max-width: 768px) 100vw, 25vw"
+            />
+         </div>
+      );
+   }
+
+   if (customImage && customImage.startsWith('/')) {
       return (
          <div className={`w-full h-full relative ${className}`}>
-            {/* Sử dụng Image thật nếu có - Trong thực tế sẽ dùng Next/Image */}
-            <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center relative overflow-hidden">
-               <span className="absolute inset-0 flex items-center justify-center text-xs text-gray-400 font-mono p-4 text-center">
-                  Ảnh thật: {customImage} <br/> (Chưa có file nên hiện text này)
-               </span>
-               {/* Khi có ảnh thật, bỏ comment dòng dưới và xóa span trên */}
-               {/* <Image src={customImage} alt={alt || "Product"} fill className="object-cover" /> */}
-            </div>
+            <Image src={customImage} alt={alt || 'Product'} fill className="object-cover" sizes="(max-width: 768px) 100vw, 25vw" />
          </div>
-      )
+      );
+   }
+
+   if (customImage) {
+      return (
+         <div className={`w-full h-full bg-gray-100 flex flex-col items-center justify-center relative overflow-hidden ${className}`}>
+            <span className="text-xs text-gray-400 font-mono p-4 text-center break-all">URL: {customImage}</span>
+         </div>
+      );
    }
 
    return (
       <div className={`w-full h-full bg-gray-100 flex flex-col items-center justify-center text-gray-300 ${className}`}>
          <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
-         <span className="text-xs font-mono uppercase tracking-widest opacity-50">Image Placeholder</span>
+         <span className="text-xs font-mono uppercase tracking-widest opacity-50">No image</span>
       </div>
    );
 };
@@ -304,7 +292,7 @@ const ProductModal = ({ product, isOpen, onClose }: { product: any, isOpen: bool
 // Separated Component for Logic
 function ShopContent() {
   const [filter, setFilter] = useState('Tất cả');
-  // Sử dụng state để lưu data, khởi tạo trong useEffect để tránh hydration mismatch
+  const [loading, setLoading] = useState(true);
   const [mixedItems, setMixedItems] = useState<any[]>([]);
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -325,49 +313,56 @@ function ShopContent() {
   }, [categoryParam]);
 
   useEffect(() => {
-    const data = generateMockData();
-    setMixedItems(data);
-    setFilteredItems(data);
-    
+    setLoading(true);
+    fetch('/api/shop/products')
+      .then((res) => res.json())
+      .then((data: any[]) => {
+        if (!Array.isArray(data)) {
+          setMixedItems([]);
+          setFilteredItems([]);
+          return;
+        }
+        const grid = data.map((p) => ({ type: 'product', ...p, id: p.id || p.slug }));
+        setMixedItems(grid);
+        setFilteredItems(grid);
+      })
+      .catch(() => {
+        setMixedItems([]);
+        setFilteredItems([]);
+      })
+      .finally(() => setLoading(false));
+
     // Xử lý việc xoay vòng header content theo thứ tự từ 1 -> 11
     if (typeof window !== 'undefined') {
       const STORAGE_KEY = 'koc_shop_header_index';
-      
-      // Lấy index cũ từ localStorage, nếu không có thì bắt đầu từ -1 để lần đầu tiên sẽ là 0
       const storedIndex = localStorage.getItem(STORAGE_KEY);
       let nextIndex = 0;
-
       if (storedIndex !== null) {
         nextIndex = (parseInt(storedIndex) + 1) % HEADERS.length;
       }
-
-      // Cập nhật index mới vào state và localStorage
       setHeaderContent(HEADERS[nextIndex]);
       localStorage.setItem(STORAGE_KEY, nextIndex.toString());
     } else {
-      // Fallback cho SSR
       setHeaderContent(HEADERS[0]);
     }
 
-    // Random quote (Vẫn giữ random cho quote nhỏ của mascot)
     setRandomQuote(CUTE_QUOTES[Math.floor(Math.random() * CUTE_QUOTES.length)]);
 
-    // Fetch animation data
     fetch('/assets/mascot/say-hi-cute-baby-girl.json')
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch animation');
         return res.json();
       })
-      .then(data => setAnimationData(data))
-      .catch(err => console.error("Error loading animation:", err));
+      .then((data) => setAnimationData(data))
+      .catch((err) => console.error('Error loading animation:', err));
   }, []);
 
   useEffect(() => {
     let items = mixedItems;
 
-    // Filter by category
+    // Filter by keyword section (Bàn phím / Chuột / Tai nghe)
     if (filter !== 'Tất cả') {
-      items = items.filter(item => item.category === filter || item.type === 'content');
+      items = items.filter(item => item.keywordSection === filter || item.type === 'content');
     }
 
     // Filter by search query
@@ -511,11 +506,24 @@ function ShopContent() {
              </div>
           )}
 
-          {/* Masonry Grid Layout */}
+          {/* Loading / Empty / Grid */}
+          {loading && (
+            <div className="py-24 text-center">
+              <p className="text-friendly-primary font-bold">Đang tải sản phẩm từ Passio...</p>
+              <p className="text-gray-400 text-sm mt-2">affiliate.passio.eco</p>
+              <p className="text-gray-400 text-xs mt-1">Lần đầu có thể mất vài giây, lần sau sẽ nhanh hơn.</p>
+            </div>
+          )}
+          {!loading && filteredItems.length === 0 && (
+            <div className="py-24 text-center">
+              <p className="text-gray-500 font-bold">Chưa có sản phẩm</p>
+              <p className="text-gray-400 text-sm mt-2">Kiểm tra cấu hình Passio (.env.local) hoặc thử lại sau.</p>
+            </div>
+          )}
+          {!loading && filteredItems.length > 0 && (
+          <>
           <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
             {filteredItems.slice(0, visibleCount).map((item, index) => {
-              
-                  // --- RENDER CARD CONTENT (Storytelling) ---
               if (item.type === 'content') {
                  return (
                    <motion.div
@@ -625,6 +633,8 @@ function ShopContent() {
               <p className="text-gray-400 mb-4">Bạn đã xem hết {filteredItems.length} sản phẩm</p>
             )}
           </div>
+          </>
+          )}
         </div>
 
         {/* Modal Popup */}

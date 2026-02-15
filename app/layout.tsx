@@ -45,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="vi" className="scroll-smooth">
+    <html lang="vi" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${spaceGrotesk.variable} ${poppins.variable} ${patrickHand.variable} font-sans antialiased`}>
         <GoogleAnalytics ga_id="G-XXXXXXXXXX" />
         {children}
