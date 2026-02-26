@@ -13,36 +13,46 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { slug } = await params;
-  const products = await getShopProducts();
-  const product = products.find((p) => p.slug === slug);
+  try {
+    const { slug } = await params;
+    const products = await getShopProducts();
+    const product = products.find((p) => p.slug === slug);
 
-  if (!product) {
-    return { title: 'Sản phẩm không tồn tại' };
+    if (!product) {
+      return { title: 'Sản phẩm không tồn tại' };
+    }
+
+    const previousImages = (await parent).openGraph?.images || [];
+    const title = typeof product.title === 'string' ? product.title : 'Sản phẩm';
+    const description = typeof product.reviewShort === 'string' ? product.reviewShort : '';
+
+    return {
+      title: `${title} | Đi Săn Cùng Tớ`,
+      description: description || title,
+      openGraph: {
+        title,
+        description: description || title,
+        images: product.image ? [product.image, ...previousImages] : previousImages,
+      },
+    };
+  } catch {
+    return { title: 'Sản phẩm | Đi Săn Cùng Tớ' };
   }
-
-  const previousImages = (await parent).openGraph?.images || [];
-
-  return {
-    title: `${product.title} | Đi Săn Cùng Tớ`,
-    description: product.reviewShort,
-    openGraph: {
-      title: product.title,
-      description: product.reviewShort,
-      images: product.image ? [product.image, ...previousImages] : previousImages,
-    },
-  };
 }
 
 export default async function Page({ params }: Props) {
-  const { slug } = await params;
-  const products = await getShopProducts();
-  const product = products.find((p) => p.slug === slug);
+  try {
+    const { slug } = await params;
+    const products = await getShopProducts();
+    const product = products.find((p) => p.slug === slug);
 
-  if (!product) notFound();
+    if (!product) notFound();
 
-  const productList: Product[] = products;
-  return (
-    <ProductDetailClient slug={slug} product={product} products={productList} />
-  );
+    const productList: Product[] = products;
+    return (
+      <ProductDetailClient slug={slug} product={product} products={productList} />
+    );
+  } catch (e) {
+    notFound();
+  }
 }

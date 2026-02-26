@@ -56,7 +56,8 @@ function mapPassioItemToProduct(item: unknown, index: number): Product {
   const link =
     (tracking.startsWith('http') ? tracking : direct.startsWith('http') ? direct : tracking || direct) || '#';
   const image = safeStr(o.product_picture ?? o.image ?? o.image_url ?? o.thumbnail ?? o.picture ?? '').trim() || null;
-  const category = safeStr(o.category_name ?? o.category ?? o.categories?.[0] ?? '').trim() || 'Quà Tặng';
+  const catFirst = Array.isArray(o.categories) ? o.categories[0] : undefined;
+  const category = safeStr(o.category_name ?? o.category ?? catFirst ?? '').trim() || 'Quà Tặng';
   const platform = safeStr(o.advertiser_id ?? o.platform ?? o.source ?? o.store ?? '').trim() || 'Shopee';
   const rating = safeNum(o.rating ?? o.star ?? o.avg_rating, 4.5);
   const tags = Array.isArray(o.tags) ? o.tags.map((t: unknown) => String(t)) : (o.tags ? [String(o.tags)] : [category || 'Must Have']);

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Space_Grotesk, Poppins, Patrick_Hand } from 'next/font/google'
 import './globals.css'
-import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
+import GoogleAnalyticsLoader from '@/components/layout/GoogleAnalyticsLoader'
 
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ['latin', 'latin-ext'],
@@ -47,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="vi" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${spaceGrotesk.variable} ${poppins.variable} ${patrickHand.variable} font-sans antialiased`}>
-        <GoogleAnalytics ga_id="G-XXXXXXXXXX" />
+        <GoogleAnalyticsLoader ga_id="G-XXXXXXXXXX" />
         {children}
       </body>
     </html>

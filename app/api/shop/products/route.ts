@@ -3,8 +3,8 @@ import { getShopProducts } from '@/lib/shop-products';
 
 /**
  * GET /api/shop/products
- * Một request trả về toàn bộ sản phẩm shop (đã merge 4 keyword).
- * Cache 3 phút để lần sau load nhanh; limit 15/keyword giảm tải Passio.
+ * Một request trả về toàn bộ sản phẩm shop (mỗi nhóm 3 keyword: Góc Chill, Chạy Deadline, ...).
+ * Cache 3 phút; limit/keyword tùy gọi.
  */
 export async function GET() {
   const products = await getShopProducts(15);

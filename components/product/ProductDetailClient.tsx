@@ -220,15 +220,22 @@ export default function ProductDetailClient({ slug, product, products = [] }: Pr
 
                   {/* Action Buttons */}
                   <div className="space-y-4 pt-4 sticky bottom-4 z-20 md:static">
-                     <a
-                        href={product.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group w-full bg-friendly-dark text-white text-center py-4 rounded-full font-bold text-lg shadow-xl shadow-friendly-dark/20 hover:bg-friendly-primary hover:shadow-friendly-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
-                     >
-                        <ShoppingBag className="w-6 h-6 group-hover:animate-bounce" />
-                        Mua ngay trên {product.platform}
-                     </a>
+                     {product.link?.startsWith('http') ? (
+                        <a
+                           href={product.link}
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           className="group w-full bg-friendly-dark text-white text-center py-4 rounded-full font-bold text-lg shadow-xl shadow-friendly-dark/20 hover:bg-friendly-primary hover:shadow-friendly-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
+                        >
+                           <ShoppingBag className="w-6 h-6 group-hover:animate-bounce" />
+                           Mua ngay trên {product.platform}
+                        </a>
+                     ) : (
+                        <span className="block w-full bg-gray-200 text-gray-500 text-center py-4 rounded-full font-bold text-lg cursor-not-allowed flex items-center justify-center gap-3">
+                           <ShoppingBag className="w-6 h-6" />
+                           Liên kết đang cập nhật
+                        </span>
+                     )}
                      
                      <div className="flex gap-3">
                         <button className="flex-1 bg-white border-2 border-gray-200 text-gray-600 py-3 rounded-full font-bold hover:border-pink-400 hover:text-pink-500 hover:bg-pink-50 transition-all flex items-center justify-center gap-2">

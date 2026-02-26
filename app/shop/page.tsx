@@ -11,6 +11,7 @@ import Footer from '@/components/layout/Footer';
 import { Quote, ShoppingBag, Star, Image as ImageIcon, Eye, Heart, X, Sparkles, Zap } from 'lucide-react';
 import type { Product } from '@/lib/data/products';
 import { getKeywordSections } from '@/lib/data/shop-keywords';
+import ShopCardSkeleton from '@/components/product/ShopCardSkeleton';
 
 // Load Lottie dynamic để tránh lỗi SSR
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
@@ -139,6 +140,7 @@ const PlaceholderImage = ({ className, customImage, alt }: { className?: string,
    if (customImage && isExternalUrl) {
       return (
          <div className={`w-full h-full relative overflow-hidden ${className}`}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- ảnh từ Passio/Shopee URL, dùng img để tránh config domain */}
             <img
                src={customImage}
                alt={alt || 'Product'}
@@ -265,15 +267,25 @@ const ProductModal = ({ product, isOpen, onClose }: { product: any, isOpen: bool
                </div>
                
                <div className="flex gap-3">
-                  <a 
-                    href={product.link} 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="flex-1 bg-friendly-dark text-white py-4 rounded-full font-bold text-lg hover:bg-black transition-colors shadow-lg flex items-center justify-center gap-2 group"
-                  >
-                     Mua ngay trên {product.platform}
-                     <Zap className="w-5 h-5 group-hover:fill-current" />
-                  </a>
+                  {product.link?.startsWith('http') ? (
+                    <a 
+                      href={product.link} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="flex-1 bg-friendly-dark text-white py-4 rounded-full font-bold text-lg hover:bg-black transition-colors shadow-lg flex items-center justify-center gap-2 group"
+                    >
+                      Mua ngay trên {product.platform}
+                      <Zap className="w-5 h-5 group-hover:fill-current" />
+                    </a>
+                  ) : (
+                    <Link 
+                      href={`/shop/${product.slug}`}
+                      className="flex-1 bg-friendly-dark text-white py-4 rounded-full font-bold text-lg hover:bg-black transition-colors shadow-lg flex items-center justify-center gap-2 group"
+                    >
+                      Xem chi tiết
+                      <Zap className="w-5 h-5 group-hover:fill-current" />
+                    </Link>
+                  )}
                   <button className="w-14 h-14 rounded-full border-2 border-gray-200 flex items-center justify-center hover:border-red-200 hover:bg-red-50 hover:text-red-500 transition-all">
                      <Heart className="w-6 h-6" />
                   </button>
@@ -312,8 +324,30 @@ function ShopContent() {
     }
   }, [categoryParam]);
 
+  // SessionStorage key for client cache (effectpassio #2)
+  const SHOP_CACHE_KEY = 'koc_shop_products';
+
   useEffect(() => {
-    setLoading(true);
+    let hasCache = false;
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = sessionStorage.getItem(SHOP_CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached) as any[];
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const grid = parsed.map((p) => ({ type: 'product', ...p, id: p.id || p.slug }));
+            setMixedItems(grid);
+            setFilteredItems(grid);
+            hasCache = true;
+            setLoading(false);
+          }
+        }
+      } catch (_) {
+        // ignore parse error
+      }
+    }
+    if (!hasCache) setLoading(true);
+
     fetch('/api/shop/products')
       .then((res) => res.json())
       .then((data: any[]) => {
@@ -325,6 +359,11 @@ function ShopContent() {
         const grid = data.map((p) => ({ type: 'product', ...p, id: p.id || p.slug }));
         setMixedItems(grid);
         setFilteredItems(grid);
+        if (typeof window !== 'undefined') {
+          try {
+            sessionStorage.setItem(SHOP_CACHE_KEY, JSON.stringify(data));
+          } catch (_) {}
+        }
       })
       .catch(() => {
         setMixedItems([]);
@@ -381,8 +420,14 @@ function ShopContent() {
   }, [filter, searchQuery, mixedItems]);
 
   const loadMore = () => {
-    setVisibleCount(prev => Math.min(prev + 12, filteredItems.length));
+    const max = showFallback ? mixedItems.length : filteredItems.length;
+    setVisibleCount(prev => Math.min(prev + 12, max));
   };
+
+  // Khi chọn 1 danh mục (vd Chạy Deadline) mà chưa có sp nhưng có sp từ danh mục khác → hiển thị gợi ý
+  const showFallback = filter !== 'Tất cả' && filteredItems.length === 0 && mixedItems.length > 0;
+  const displayItems = showFallback ? mixedItems : filteredItems;
+  const displayCount = showFallback ? mixedItems.length : filteredItems.length;
 
   return (
     <>
@@ -506,24 +551,33 @@ function ShopContent() {
              </div>
           )}
 
-          {/* Loading / Empty / Grid */}
+          {/* Loading: Skeleton grid (#3 Skeleton UI) */}
           {loading && (
-            <div className="py-24 text-center">
-              <p className="text-friendly-primary font-bold">Đang tải sản phẩm từ Passio...</p>
-              <p className="text-gray-400 text-sm mt-2">affiliate.passio.eco</p>
-              <p className="text-gray-400 text-xs mt-1">Lần đầu có thể mất vài giây, lần sau sẽ nhanh hơn.</p>
-            </div>
+            <>
+              <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <ShopCardSkeleton key={i} />
+                ))}
+              </div>
+              <p className="text-center text-gray-400 text-sm mt-6">Đang tải từ Passio...</p>
+            </>
           )}
-          {!loading && filteredItems.length === 0 && (
+          {!loading && displayItems.length === 0 && (
             <div className="py-24 text-center">
               <p className="text-gray-500 font-bold">Chưa có sản phẩm</p>
               <p className="text-gray-400 text-sm mt-2">Kiểm tra cấu hình Passio (.env.local) hoặc thử lại sau.</p>
             </div>
           )}
-          {!loading && filteredItems.length > 0 && (
+          {!loading && displayItems.length > 0 && (
           <>
+          {showFallback && (
+            <div className="mb-8 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-center">
+              <p className="text-amber-800 font-bold">{filter} đang bổ sung sản phẩm.</p>
+              <p className="text-amber-700 text-sm mt-1">Dưới đây là gợi ý từ các danh mục khác — vẫn có deal xịn nha!</p>
+            </div>
+          )}
           <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-            {filteredItems.slice(0, visibleCount).map((item, index) => {
+            {displayItems.slice(0, visibleCount).map((item, index) => {
               if (item.type === 'content') {
                  return (
                    <motion.div
@@ -622,7 +676,7 @@ function ShopContent() {
           </div>
 
           <div className="text-center mt-16 pb-12">
-            {visibleCount < filteredItems.length ? (
+            {visibleCount < displayCount ? (
               <button 
                 onClick={loadMore}
                 className="px-8 py-3 bg-white border-2 border-dashed border-gray-300 rounded-full font-bold text-gray-500 hover:border-friendly-dark hover:text-friendly-dark hover:bg-friendly-dark/5 transition-all"
@@ -630,7 +684,7 @@ function ShopContent() {
                 Xem thêm sản phẩm khác
               </button>
             ) : (
-              <p className="text-gray-400 mb-4">Bạn đã xem hết {filteredItems.length} sản phẩm</p>
+              <p className="text-gray-400 mb-4">Bạn đã xem hết {displayCount} sản phẩm</p>
             )}
           </div>
           </>

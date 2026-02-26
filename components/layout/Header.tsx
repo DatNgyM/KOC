@@ -3,6 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
+// Prefetch shop products when user hovers Shop link (effectpassio #4)
+function prefetchShopProducts() {
+  if (typeof window === 'undefined') return
+  fetch('/api/shop/products').catch(() => {})
+}
 import { Search, Menu, X, ChevronDown, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -85,10 +91,13 @@ export default function Header() {
               </AnimatePresence>
             </div>
 
-            {/* Nav Item: Shop */}
+            {/* Nav Item: Shop — prefetch products on hover (#4) */}
             <div 
               className="relative"
-              onMouseEnter={() => setOpenDropdown('shop')}
+              onMouseEnter={() => {
+                setOpenDropdown('shop')
+                prefetchShopProducts()
+              }}
               onMouseLeave={() => setOpenDropdown(null)}
             >
               <button className="flex items-center gap-1 text-base font-bold text-gray-600 hover:text-friendly-primary transition-colors px-3 py-4">
@@ -106,11 +115,11 @@ export default function Header() {
                     className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-64 z-50"
                   >
                      <div className="bg-white border-2 border-gray-100 shadow-xl rounded-2xl py-2 overflow-hidden">
-                        <Link href="/shop" className="block px-6 py-3 text-sm font-medium text-gray-600 hover:bg-friendly-light hover:text-friendly-primary">Tất cả sản phẩm</Link>
-                        <Link href="/shop?category=Góc Chill" className="block px-6 py-3 text-sm font-medium text-gray-600 hover:bg-friendly-light hover:text-friendly-primary">Góc Chill</Link>
-                        <Link href="/shop?category=Chạy Deadline" className="block px-6 py-3 text-sm font-medium text-gray-600 hover:bg-friendly-light hover:text-friendly-primary">Chạy Deadline</Link>
-                        <Link href="/shop?category=Đi Học" className="block px-6 py-3 text-sm font-medium text-gray-600 hover:bg-friendly-light hover:text-friendly-primary">Đi Học</Link>
-                        <Link href="/shop?category=Quà Tặng" className="block px-6 py-3 text-sm font-medium text-gray-600 hover:bg-friendly-light hover:text-friendly-primary">Quà Tặng</Link>
+                        <Link href="/shop" prefetch className="block px-6 py-3 text-sm font-medium text-gray-600 hover:bg-friendly-light hover:text-friendly-primary">Tất cả sản phẩm</Link>
+                        <Link href="/shop?category=Góc Chill" prefetch className="block px-6 py-3 text-sm font-medium text-gray-600 hover:bg-friendly-light hover:text-friendly-primary">Góc Chill</Link>
+                        <Link href="/shop?category=Chạy Deadline" prefetch className="block px-6 py-3 text-sm font-medium text-gray-600 hover:bg-friendly-light hover:text-friendly-primary">Chạy Deadline</Link>
+                        <Link href="/shop?category=Đi Học" prefetch className="block px-6 py-3 text-sm font-medium text-gray-600 hover:bg-friendly-light hover:text-friendly-primary">Đi Học</Link>
+                        <Link href="/shop?category=Quà Tặng" prefetch className="block px-6 py-3 text-sm font-medium text-gray-600 hover:bg-friendly-light hover:text-friendly-primary">Quà Tặng</Link>
                      </div>
                   </motion.div>
                 )}
@@ -208,7 +217,7 @@ export default function Header() {
         {isMenuOpen && (
           <div className="lg:hidden py-4 border-t border-gray-100 space-y-2 animate-fade-in">
             <Link href="/" className="block px-4 py-3 rounded-2xl text-base font-bold text-gray-700 hover:bg-friendly-light hover:text-friendly-primary">Trang Chủ</Link>
-            <Link href="/shop" className="block px-4 py-3 rounded-2xl text-base font-bold text-gray-700 hover:bg-friendly-light hover:text-friendly-primary">Cửa Hàng</Link>
+            <Link href="/shop" prefetch onMouseEnter={prefetchShopProducts} className="block px-4 py-3 rounded-2xl text-base font-bold text-gray-700 hover:bg-friendly-light hover:text-friendly-primary">Cửa Hàng</Link>
             <Link href="/blog" className="block px-4 py-3 rounded-2xl text-base font-bold text-gray-700 hover:bg-friendly-light hover:text-friendly-primary">Blog Review</Link>
             <Link href="/about" className="block px-4 py-3 rounded-2xl text-base font-bold text-gray-700 hover:bg-friendly-light hover:text-friendly-primary">Về Tụi Mình</Link>
             <Link href="/contact" className="block px-4 py-3 rounded-2xl text-base font-bold text-gray-700 hover:bg-friendly-light hover:text-friendly-primary">Kết Nối</Link>

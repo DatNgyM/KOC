@@ -4,6 +4,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Facebook, Instagram, Twitter, Mail, Heart, Sparkles } from 'lucide-react'
 
+function prefetchShopProducts() {
+  if (typeof window === 'undefined') return
+  fetch('/api/shop/products').catch(() => {})
+}
+
 export default function Footer() {
   return (
     <footer className="bg-white pt-32 pb-24 border-t-0 relative">
@@ -55,7 +60,7 @@ export default function Footer() {
                   </Link>
               </li>
                <li>
-                  <Link href="/shop" className="text-gray-500 hover:text-friendly-primary font-medium transition-colors hover:pl-2 inline-block">
+                  <Link href="/shop" prefetch onMouseEnter={prefetchShopProducts} className="text-gray-500 hover:text-friendly-primary font-medium transition-colors hover:pl-2 inline-block">
                     Săn Deal Hot
                   </Link>
               </li>

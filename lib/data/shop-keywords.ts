@@ -8,9 +8,9 @@ export const SHOP_KEYWORDS = [
     label: 'Góc Chill',
     description: 'Decor & Chill — sản phẩm thẩm mỹ, decor: đèn trang trí, đồ trang trí, loa, mô hình.',
     keywords: [
+      'loa bluetooth',
       'den trang tri',
       'decor phong',
-      'loa bluetooth',
       'do trang tri',
       'den led trang tri',
       'mo hinh decor',
@@ -22,15 +22,25 @@ export const SHOP_KEYWORDS = [
     label: 'Chạy Deadline',
     description: 'Productivity — hiệu năng, công thái học, đồ bền cho dân tech/code. Sản phẩm: Phím cơ, chuột ergonomic, ghế, setup gear.',
     keywords: [
-      'phim co gaming',
       'ban phim co',
       'chuot gaming',
-      'chuot ergonomic',
+      'chuot cong thai hoc',
+      'phim co gaming',
+      'ban phim co gaming',
+      'chuot khong day',
+      'logitech',
+      'razer',
+      'keyboard mechanical',
+      'chuot van phong',
       'ghe gaming',
       'ghe van phong',
+      'phu kien may tinh',
+      'lot chuot',
+      'ban phim khong day',
+      'chuot logitech',
+      'ban phim razer',
       'man hinh may tinh',
       'webcam',
-      'logitech',
     ],
   },
   {
@@ -68,11 +78,26 @@ export type ShopCategoryLabel = (typeof SHOP_KEYWORDS)[number]['label'];
 
 /**
  * Trả về cặp (label, keyword) để gọi API: mỗi nhóm dùng keyword đầu tiên.
- * Có thể đổi sang flatMap để gọi nhiều keyword per nhóm nếu cần.
+ * Dùng cho backward compatibility (1 keyword/section).
  */
 export function getKeywordSections(): { label: string; keyword: string }[] {
   return SHOP_KEYWORDS.map((cat) => ({
     label: cat.label,
     keyword: cat.keywords[0],
   }));
+}
+
+/**
+ * Trả về nhiều keyword cho mỗi nhóm (2–3 keyword đầu) để gọi API nhiều lần, merge sản phẩm.
+ * Giúp Góc Chill, Chạy Deadline có đủ sản phẩm khi 1 keyword ít kết quả.
+ */
+export function getKeywordSectionsMulti(keywordsPerSection = 3): { label: string; keyword: string }[] {
+  const out: { label: string; keyword: string }[] = [];
+  for (const cat of SHOP_KEYWORDS) {
+    const take = Math.min(keywordsPerSection, cat.keywords.length);
+    for (let i = 0; i < take; i++) {
+      out.push({ label: cat.label, keyword: cat.keywords[i] });
+    }
+  }
+  return out;
 }
