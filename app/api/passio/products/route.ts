@@ -5,6 +5,9 @@ import { getPassioProducts, isPassioError } from '@/lib/passio';
  * GET /api/passio/products
  * Query: keyword (vd: ban phim, chuot gaming), limit (mặc định 20).
  */
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const keyword = searchParams.get('keyword') ?? undefined;
