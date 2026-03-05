@@ -1,0 +1,62 @@
+{
+  "categories": [
+    {
+      "label": "Góc Chill",
+      "description": "Decor & Chill — sản phẩm thẩm mỹ, decor: đèn trang trí, đồ trang trí, loa, mô hình.",
+      "keywords": [
+        "den trang tri",
+        "decor phong",
+        "loa bluetooth",
+        "do trang tri",
+        "den led trang tri",
+        "mo hinh decor",
+        "den ngu",
+        "loa bluetooth mini"
+      ]
+    },
+    {
+      "label": "Chạy Deadline",
+      "description": "Productivity — hiệu năng, công thái học, đồ bền cho dân tech/code. Sản phẩm: Phím cơ, chuột ergonomic, ghế, setup gear.",
+      "keywords": [
+        "phim co gaming",
+        "ban phim co",
+        "chuot gaming",
+        "chuot ergonomic",
+        "ghe gaming",
+        "ghe van phong",
+        "man hinh may tinh",
+        "webcam",
+        "logitech"
+      ]
+    },
+    {
+      "label": "Đi Học",
+      "description": "Student Essentials — di động, giá sinh viên, tiện lợi. Sản phẩm: Balo, sạc dự phòng, túi chống sốc, bình giữ nhiệt.",
+      "keywords": [
+        "balo laptop",
+        "sac du phong",
+        "tui chong soc laptop",
+        "binh giu nhiet",
+        "balo sinh vien",
+        "sac pin du phong",
+        "binh nuoc",
+        "anker",
+        "xiaomi sac"
+      ]
+    },
+    {
+      "label": "Quà Tặng",
+      "description": "Accessories — nhỏ gọn, dễ thương, giá rẻ. Sản phẩm: Keycap, lót chuột, quà lưu niệm.",
+      "keywords": [
+        "keycap",
+        "lot chuot gaming",
+        "qua luu niem",
+        "keycap custom",
+        "lot chuot",
+        "phu kien may tinh",
+        "usb hub",
+        "gia de dien thoai"
+      ]
+    }
+  ]
+}
